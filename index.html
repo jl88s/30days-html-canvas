@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>HTML5 Canvas</title>
+</head>
+<body>
+<canvas id="draw" width="800" height="800"></canvas>
+<script>
+
+// 1. grab the canvas element from the DOM
+const canvas = document.querySelector('#draw');
+const ctx = canvas.getContext('2d');
+
+// 2. make canvas the same height/width as window. 
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+// where you customize and add methods to the objs
+ctx.strokeStyle = '#BADA55';
+ctx.lineJoin = 'round';
+ctx.lineCap = 'round';
+ctx.lineWidth = 100;
+ctx.globalCompositeOperation = 'multiply';
+
+// is the user clicking ON the mouse to draw? if no, don't do anything.
+let isDrawing = false;
+// create a start and end point for the lines which are X & Y.
+let lastX = 0;
+let lastY = 0;
+let hue = 0;
+let direction = true;
+
+function draw(e) {
+  if(!isDrawing) return; // stop the fnc from running when they are not moused-down.
+  console.log(e);
+
+  // adding color to the strokes.
+  ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`;
+  // start the drawing.
+  ctx.beginPath();
+  // start from.
+  ctx.moveTo(lastX, lastY);
+  // go to.
+  ctx.lineTo(e.offsetX, e.offsetY);
+  ctx.stroke();
+  [lastX, lastY] = [e.offsetX, e.offsetY];
+  // lastX = e.offsetX;
+  // lastY = e.offsetY;
+
+  // will increment the stroke style colors.
+  hue++;
+  // reset the hue.
+  if( hue >= 360) {
+    hue = 0;
+  }
+
+  // increment the line width or decrement .
+  if (ctx.lineWidth >= 100 || ctx.lineWidth <= 1) {
+    direction = !direction;
+  }
+  if (direction) {
+    ctx.lineWidth++;
+  } else {
+    ctx.lineWidth--;
+  }
+};
+
+canvas.addEventListener('mousemove', draw);
+
+canvas.addEventListener('mousedown', (e) => {
+  isDrawing = true;
+  [lastX, lastY] = [e.offsetX, e.offsetY];
+
+});
+
+canvas.addEventListener('mouseup', () => isDrawing = false);
+canvas.addEventListener('mouseout', () => isDrawing = false)
+ 
+</script>
+
+<style>
+  html, body {
+    margin: 0;
+  }
+</style>
+
+</body>
+</html>
